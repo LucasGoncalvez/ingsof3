@@ -20,7 +20,10 @@ Este proyecto está desarrollado con **Python 3** y **Django**. Sigue los pasos 
    cd <NOMBRE_DEL_PROYECTO>
    ```
 
-2. **Crear y activar un entorno virtual**:
+2. **Crear tablas en la base de datos**
+- Crear base de datos postgresql y ejecutar el archivo **script postgresql - traducido.txt** que se encuentra en la raíz del proyecto.
+
+3. **Crear y activar un entorno virtual**:
 
    ```bash
    python -m venv venv
@@ -28,19 +31,19 @@ Este proyecto está desarrollado con **Python 3** y **Django**. Sigue los pasos 
    venv\Scripts\activate     # En Windows
    ```
 
-3. **Instalar las dependencias**:
+4. **Instalar las dependencias**:
 
    ```bash
    pip install -r requirements.txt
    ```
 
-4. **Ejecutar migraciones**:
+5. **Ejecutar migraciones**:
 
    ```bash
    python manage.py migrate
    ```
 
-5. **Iniciar el servidor**:
+6. **Iniciar el servidor**:
 
    ```bash
    python manage.py runserver
