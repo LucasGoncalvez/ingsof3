@@ -1,4 +1,4 @@
-{% extends 'base.html' %}  <!-- Si tienes una plantilla base, si no, quita esta línea -->
+{% extends 'base.html' %}
 {% load custom_filters %}
 
 {% block content %}
@@ -178,7 +178,6 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Configurar los modales para establecer el monto máximo
     document.querySelectorAll('[id^="pagoModal"]').forEach(modal => {
         modal.addEventListener('show.bs.modal', function (event) {
             const saldoInput = modal.querySelector('input[readonly][value*="."]'); // Busca el input de saldo

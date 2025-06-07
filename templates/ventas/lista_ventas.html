@@ -1,4 +1,4 @@
-{% extends 'base.html' %}  <!-- Si tienes una plantilla base, si no, quita esta línea -->
+{% extends 'base.html' %}
 
 {% block content %}
 <div class="container mt-4">
@@ -9,7 +9,7 @@
         </a>
     </div>
 
-    <!-- Barra de búsqueda (opcional) -->
+    <!-- Barra de búsqueda -->
     <div class="card mb-4">
         <div class="card-body">
             <form method="get" class="row g-3">
@@ -75,7 +75,7 @@
         </div>
     </div>
 
-    <!-- Paginación (opcional) -->
+    <!-- Paginación -->
     {% if is_paginated %}
     <nav aria-label="Page navigation" class="mt-4">
         <ul class="pagination justify-content-center">

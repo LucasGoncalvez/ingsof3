@@ -72,7 +72,7 @@ def lista_ventas(request):
     # Obtener todas las ventas ordenadas por fecha más reciente
     ventas = Ventas.objects.all().order_by('-fechafactura', '-nrofactura')
     
-    # Búsqueda (opcional)
+    # Búsqueda
     query = request.GET.get('q')
     if query:
         ventas = ventas.filter(
@@ -101,7 +101,7 @@ class PagoCuotaForm(forms.Form):
             'min': '0.01'
         })
     )
-    
+
 
 def detalle_venta(request, venta_id):
     venta = get_object_or_404(Ventas, pk=venta_id)
