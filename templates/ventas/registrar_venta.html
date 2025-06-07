@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    .form-label {
+        font-weight: 500;
+    }
+</style>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <div class="d-flex justify-content-between align-items-center">
+                <h3 class="card-title mb-0">
+                    <i class="fas fa-cash-register me-2"></i>{{ title }}
+                </h3>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <form method="post" class="needs-validation" novalidate>
+                {% csrf_token %}
+                
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.fechafactura.id_for_label }}" class="form-label">Fecha de Factura</label>
+                            {{ form.fechafactura }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione una fecha válida.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.clienteid.id_for_label }}" class="form-label">Cliente</label>
+                            {{ form.clienteid }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione un cliente.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.tipodocid.id_for_label }}" class="form-label">Tipo de Documento</label>
+                            {{ form.tipodocid }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione un tipo de documento.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.plazoid.id_for_label }}" class="form-label">Plazo de Pago</label>
+                            {{ form.plazoid }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione un plazo de pago.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.talonarioid.id_for_label }}" class="form-label">Talorario</label>
+                            {{ form.talonarioid }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione un talonario.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.depositoid.id_for_label }}" class="form-label">Depósito</label>
+                            {{ form.depositoid }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione un depósito.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.monedaid.id_for_label }}" class="form-label">Moneda</label>
+                            {{ form.monedaid }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione un tipo de moneda.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.totalbase.id_for_label }}" class="form-label">Total Base</label>
+                            {{ form.totalbase }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione un total base.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.totalimpuesto.id_for_label }}" class="form-label">Total Impuesto</label>
+                            {{ form.totalimpuesto }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione el impuesto total.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="required-field">
+                            <label for="{{ form.totalexento.id_for_label }}" class="form-label">Total Exento</label>
+                            {{ form.totalexento }}
+                            <div class="invalid-feedback">
+                                Por favor seleccione el total exento.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a href="{% url 'lista_ventas' %}" class="btn btn-secondary me-md-2">
+                        <i class="fas fa-times me-1"></i> Cancelar
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i> Guardar Venta
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Validación del formulario
+    (function () {
+        'use strict'
+        
+        // Obtener todos los formularios a los que queremos aplicar estilos de validación de Bootstrap
+        var forms = document.querySelectorAll('.needs-validation')
+        
+        // Bucle sobre ellos y evitar el envío
+        Array.prototype.slice.call(forms)
+            .forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    
+                    form.classList.add('was-validated')
+                }, false)
+            })
+    })()
+    
+    // Mejorar la experiencia de usuario con selects
+    document.addEventListener('DOMContentLoaded', function() {
+        const selects = document.querySelectorAll('select.form-control');
+        selects.forEach(select => {
+            select.classList.add('form-select');
+        });
+        
+        // Mejorar el datepicker si es necesario
+        const dateInput = document.getElementById('{{ form.fechafactura.id_for_label }}');
+        if (dateInput) {
+            dateInput.classList.add('form-control');
+        }
+    });
+</script>
+{% endblock %}
