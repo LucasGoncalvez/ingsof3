@@ -50,7 +50,7 @@
                     <tbody>
                         {% for venta in ventas %}
                         <tr>
-                            <td>{{ venta.serie }}-{{ venta.nrofactura }}</td>
+                            <td>{{ venta.serie }}-{{ venta.nrofactura|stringformat:"07d" }}</td>
                             <td>{{ venta.fechafactura|date:"d/m/Y" }}</td>
                             <td>{{ venta.clienteid.nombres }} {{ venta.clienteid.apellidos }}</td>
                             <td>{{ venta.clienteid.documentonro }}</td>

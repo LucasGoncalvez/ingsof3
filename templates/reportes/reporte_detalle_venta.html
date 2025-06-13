@@ -40,12 +40,12 @@
     </style>
 </head>
 <body>
-    <h2>{{ title }}</h2>
+    <h2>Detalle de Venta {{ venta.serie }}-{{ venta.nrofactura|stringformat:"07d" }}</h2>
 
     <div class="section">
         <div class="section-title">Información de la Venta</div>
         <table>
-            <tr><th>N° Factura</th><td>{{ venta.serie }}-{{ venta.nrofactura }}</td></tr>
+            <tr><th>N° Factura</th><td>{{ venta.serie }}-{{ venta.nrofactura|stringformat:"07d" }}</td></tr>
             <tr><th>Fecha</th><td>{{ venta.fechafactura|date:"d/m/Y" }}</td></tr>
             <tr><th>Cliente</th><td>{{ venta.clienteid.nombres }} {{ venta.clienteid.apellidos }}</td></tr>
             <tr><th>Documento</th><td>{{ venta.clienteid.documentonro }}</td></tr>

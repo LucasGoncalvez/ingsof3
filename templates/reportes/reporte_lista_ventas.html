@@ -7,7 +7,7 @@
         body {
             font-family: DejaVu Sans, sans-serif;
             font-size: 11px;
-            margin: 30px;
+            margin: 2px;
         }
         h2 {
             text-align: center;
@@ -49,7 +49,7 @@
     <table>
         <thead>
             <tr>
-                <th>N° Factura</th>
+                <th class="text-right">N° Factura</th>
                 <th>Fecha</th>
                 <th>Cliente</th>
                 <th>Documento</th>
@@ -61,7 +61,7 @@
         <tbody>
             {% for venta in ventas %}
             <tr>
-                <td>{{ venta.serie }}-{{ venta.nrofactura }}</td>
+                <td>{{ venta.serie }}-{{ venta.nrofactura|stringformat:"07d" }}</td>
                 <td>{{ venta.fechafactura|date:"d/m/Y" }}</td>
                 <td>{{ venta.clienteid.nombres }} {{ venta.clienteid.apellidos }}</td>
                 <td>{{ venta.clienteid.documentonro }}</td>
