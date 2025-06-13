@@ -5,6 +5,10 @@ from django.contrib import messages
 from django.db.models import Q, Max
 from .models import Ventas, Clientes, TiposDocumento, Plazos, Monedas, Depositos, Talonarios, \
     CuentasCobrar, PlazoDetalles
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from xhtml2pdf import pisa
+import io
 
 class VentaForm(forms.ModelForm):
     class Meta:
@@ -151,3 +155,85 @@ def detalle_venta(request, venta_id):
         'form': form,
     }
     return render(request, 'ventas/detalle_venta.html', context)
+
+
+def reporte_lista_ventas_pdf(request):
+    ventas = Ventas.objects.all().order_by('-fechafactura', '-nrofactura')
+
+    query = request.GET.get('q')
+    if query:
+        ventas = ventas.filter(
+            Q(nrofactura__icontains=query) |
+            Q(clienteid__nombres__icontains=query) |
+            Q(clienteid__apellidos__icontains=query) |
+            Q(clienteid__documentonro__icontains=query)
+        )
+
+    context = {
+        'ventas': ventas,
+        'title': 'Reporte de Ventas',
+    }
+
+    html = render_to_string('reportes/reporte_lista_ventas.html', context)
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), dest=result)
+
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return HttpResponse('Error al generar el PDF', status=500)
+    
+def reporte_detalle_venta_pdf(request, venta_id):
+    venta = get_object_or_404(Ventas, pk=venta_id)
+    cuotas = None
+    
+    # Manejar el POST para registrar pagos
+    if request.method == 'POST' and 'registrar_pago' in request.POST:
+        form = PagoCuotaForm(request.POST)
+        if form.is_valid():
+            cuota_id = request.POST.get('cuota_id')
+            monto = form.cleaned_data['monto']
+            
+            try:
+                cuota = CuentasCobrar.objects.get(id=cuota_id)
+                cuota.cobrado += monto
+                if cuota.cobrado > cuota.importe:
+                    messages.warning(request, 'El monto ingresado supera el saldo de la cuota')
+                else:
+                    cuota.save()
+                    messages.success(request, f'Pago de {monto} registrado en la cuota {cuota.cuota}')
+                    return redirect('detalle_venta', venta_id=venta.id)
+            except CuentasCobrar.DoesNotExist:
+                messages.error(request, 'Cuota no encontrada')
+    
+    if venta.plazoid and venta.plazoid.cuotas > 1:
+        cuotas = CuentasCobrar.objects.filter(
+            tabla='VENTAS',
+            tablaid=venta.id
+        ).order_by('cuota')
+        
+        plazo_detalles = PlazoDetalles.objects.filter(plazoid=venta.plazoid).order_by('cuota')
+        
+        for cuota in cuotas:
+            detalle = plazo_detalles.filter(cuota=cuota.cuota).first() if plazo_detalles.exists() else None
+            if detalle:
+                cuota.dias_plazo = detalle.dias
+            else:
+                cuota.dias_plazo = None
+            cuota.saldo = cuota.importe - cuota.cobrado
+    
+    form = PagoCuotaForm()
+    
+    context = {
+        'venta': venta,
+        'cuotas': cuotas,
+        'title': f'Detalle de Venta {venta.serie}-{venta.nrofactura}',
+        'form': form,
+    }
+
+    html = render_to_string('reportes/reporte_detalle_venta.html', context)
+    result = io.BytesIO()
+    pdf = pisa.pisaDocument(io.BytesIO(html.encode("UTF-8")), dest=result)
+
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return HttpResponse('Error al generar el PDF', status=500)

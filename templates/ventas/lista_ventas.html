@@ -6,7 +6,7 @@
         <h2><i class="fas fa-list me-2"></i>{{ title }}</h2>
         <a href="{% url 'registrar_venta' %}" class="btn btn-success">
             <i class="fas fa-plus me-1"></i> Nueva Venta
-        </a>
+        </a>    
     </div>
 
     <!-- Barra de búsqueda -->
@@ -25,6 +25,11 @@
         </div>
     </div>
 
+    <a href="{% url 'reporte_lista_ventas_pdf' %}?q={{ request.GET.q }}" class="btn btn-outline-secondary" target="_blank">
+    <i class="fas fa-file-pdf me-1"></i> Exportar PDF
+    </a>
+    <br>
+    <br>
     <!-- Tabla de ventas -->
     <div class="card">
         <div class="card-body">

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 11px;
+            margin: 30px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 6px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        footer {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            font-size: 10px;
+            text-align: center;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <h2>{{ title }}</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>N° Factura</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Documento</th>
+                <th>Tipo</th>
+                <th class="text-right">Total</th>
+                <th>Plazo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for venta in ventas %}
+            <tr>
+                <td>{{ venta.serie }}-{{ venta.nrofactura }}</td>
+                <td>{{ venta.fechafactura|date:"d/m/Y" }}</td>
+                <td>{{ venta.clienteid.nombres }} {{ venta.clienteid.apellidos }}</td>
+                <td>{{ venta.clienteid.documentonro }}</td>
+                <td>{{ venta.tipodocid.abrebiatura }}</td>
+                <td class="text-right">{{ venta.totalfactura|floatformat:2 }}</td>
+                <td>
+                    {% if venta.plazoid %}
+                        {{ venta.plazoid.plazo }} ({{ venta.plazoid.cuotas }} cuotas)
+                    {% else %}
+                        Contado
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">No hay ventas registradas.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <footer>
+        Reporte generado el {{ now|date:"d/m/Y H:i" }}
+    </footer>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <style>
+        body {
+            font-family: DejaVu Sans, sans-serif;
+            font-size: 12px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 5px;
+            margin-bottom: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 5px;
+        }
+        th, td {
+            border: 1px solid #444;
+            padding: 5px;
+            text-align: left;
+        }
+        th {
+            background-color: #ddd;
+        }
+        .right {
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <h2>{{ title }}</h2>
+
+    <div class="section">
+        <div class="section-title">Información de la Venta</div>
+        <table>
+            <tr><th>N° Factura</th><td>{{ venta.serie }}-{{ venta.nrofactura }}</td></tr>
+            <tr><th>Fecha</th><td>{{ venta.fechafactura|date:"d/m/Y" }}</td></tr>
+            <tr><th>Cliente</th><td>{{ venta.clienteid.nombres }} {{ venta.clienteid.apellidos }}</td></tr>
+            <tr><th>Documento</th><td>{{ venta.clienteid.documentonro }}</td></tr>
+            <tr><th>Tipo</th><td>{{ venta.tipodocid.tipo }}</td></tr>
+            <tr><th>Depósito</th><td>{{ venta.depositoid.deposito }}</td></tr>
+            <tr><th>Moneda</th><td>{{ venta.monedaid.moneda }} ({{ venta.monedaid.abrebiatura }})</td></tr>
+            <tr>
+                <th>Plazo</th>
+                <td>
+                    {% if venta.plazoid %}
+                        {{ venta.plazoid.plazo }} ({{ venta.plazoid.cuotas }} cuotas)
+                    {% else %}
+                        Contado
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Totales</div>
+        <table>
+            <tr><th>Total Exento</th><td class="right">{{ venta.totalexento|floatformat:2 }}</td></tr>
+            <tr><th>Total Gravado</th><td class="right">{{ venta.totalbase|floatformat:2 }}</td></tr>
+            <tr><th>Total Impuesto</th><td class="right">{{ venta.totalimpuesto|floatformat:2 }}</td></tr>
+            <tr><th><strong>Total Factura</strong></th><td class="right"><strong>{{ venta.totalfactura|floatformat:2 }}</strong></td></tr>
+        </table>
+    </div>
+
+    {% if cuotas %}
+    <div class="section">
+        <div class="section-title">Cuotas de Pago</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cuota</th>
+                    <th>Vencimiento</th>
+                    <th>Importe</th>
+                    <th>Pagado</th>
+                    <th>Saldo</th>
+                    <th>Días Plazo</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cuota in cuotas %}
+                <tr>
+                    <td>{{ cuota.cuota }}</td>
+                    <td>{{ cuota.vence|date:"d/m/Y" }}</td>
+                    <td class="right">{{ cuota.importe|floatformat:2 }}</td>
+                    <td class="right">{{ cuota.cobrado|floatformat:2 }}</td>
+                    <td class="right">{{ cuota.saldo|floatformat:2 }}</td>
+                    <td class="right">{{ cuota.dias_plazo|default:"-" }}</td>
+                    <td>
+                        {% if cuota.cobrado >= cuota.importe %}
+                            Pagado
+                        {% elif cuota.cobrado > 0 %}
+                            Parcial
+                        {% else %}
+                            Pendiente
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+</body>
+</html>
