@@ -79,13 +79,17 @@ def lista_ventas(request):
     # Búsqueda
     query = request.GET.get('q')
     if query:
-        ventas = ventas.filter(
-            Q(nrofactura__icontains=query) |
-            Q(clienteid__nombres__icontains=query) |
-            Q(clienteid__apellidos__icontains=query) |
-            Q(clienteid__documentonro__icontains=query)
-        )
-    
+        # Dividir el query en palabras individuales
+        palabras = query.split()
+        # Filtro para nombres y apellidos (todas las palabras deben estar)
+        filtro_nombre_apellido = Q()
+        for palabra in palabras:
+           filtro_nombre_apellido &= (Q(clienteid__nombres__icontains=palabra) | Q(clienteid__apellidos__icontains=palabra))
+        # Filtro para número de factura o documento
+        filtro_factura_doc = Q(nrofactura__icontains=query) | Q(clienteid__documentonro__icontains=query)
+        # Combinar ambos filtros (OR)
+        ventas = ventas.filter(filtro_nombre_apellido | filtro_factura_doc)
+
     context = {
         'ventas': ventas,
         'title': 'Listado de Ventas',
